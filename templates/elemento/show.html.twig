@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Elemento{% endblock %}
+
+{% block body %}
+    
+
+    <a href="{{ path('app_elemento_index') }}">back to list</a>
+
+    <a href="{{ path('app_elemento_edit', {'id': elemento.id}) }}">edit</a>
+
+    {{ include('elemento/_delete_form.html.twig') }}
+{% endblock %}

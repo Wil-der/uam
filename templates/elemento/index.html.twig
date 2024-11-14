@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Elementos{% endblock %}
+
+{% block body %}
+<div id="grid_card">
+    {% if elementos is empty() %}
+    <h1 style="    grid-column: 1 / 5; display: flex; justify-content: center;">No hay coincidencias en su busqueda</h1>
+    {% endif %}
+    {% for elemento in elementos %}
+    <div class="card">
+        <div class="card_body">
+            <div id="componente_{{ elemento.id }}"></div>
+            <div class="botonera_card">
+                <a href="{{ path('app_elemento_show', {'id': elemento.id}) }}" style="text-decoration: none; display: flex; align-items: center;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="100" height="40" viewBox="0 0 60 40" fill="none">
+                        <text x="45" y="25" fill="black">&lt;/&gt;</text>
+                    </svg>
+                    <span>Ver Código</span>
+                </a>
+            </div>
+        </div>
+        <div class="card_footer">
+            <div>
+                <h4>{{ elemento.nombre | title}}</h4>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('componente_{{ elemento.id }}');
+            const shadowRoot = container.attachShadow({ mode: 'open' });
+
+            // Inyectar CSS
+            const style = document.createElement('style');
+            style.textContent = `{{ elemento.css | raw }} *{padding: 0; box-sizing: border-box;}`;
+            shadowRoot.appendChild(style);
+
+            // Inyectar HTML
+            const componentHTML = document.createElement('div');
+            componentHTML.innerHTML = `{{ elemento.html | raw }}`;
+            shadowRoot.appendChild(componentHTML);
+
+            // Inyectar JavaScript
+            const script = document.createElement('script');
+            script.textContent = `{{ elemento.js | raw }}`;
+            shadowRoot.appendChild(script);
+        });
+    </script>
+    {% endfor %}
+</div>
+{% endblock %}

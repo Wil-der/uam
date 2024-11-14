@@ -1,0 +1,76 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Editar Elemento{% endblock %}
+
+{% block body %}
+    <h1>Edit Elemento</h1>
+
+    <!-- Incluir formulario de edición -->
+    {{ include('elemento/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <!-- Enlace para regresar a la lista -->
+    <a href="{{ path('app_elemento_index') }}">back to list</a>
+
+    <!-- Incluir formulario de eliminación -->
+    {{ include('elemento/_delete_form.html.twig') }}
+
+    <!-- Vista previa del componente -->
+    <div id="vista_previa_componente">
+        <div class="card">
+            <div class="card_body">
+                <div id="componente_preview"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('componente_preview');
+            const shadowRoot = container.attachShadow({ mode: 'open' });
+                
+                // Inyectar CSS
+                const style = document.createElement('style');
+                style.textContent = `{{ elemento.css | raw }} *{padding: 0; box-sizing: border-box;}`;
+                shadowRoot.appendChild(style);
+                
+                // Inyectar HTML
+                const componentHTML = document.createElement('div');
+                componentHTML.innerHTML = `{{ elemento.html | raw }}`;
+                shadowRoot.appendChild(componentHTML);
+                
+                // Inyectar JavaScript
+                const script = document.createElement('script');
+                script.textContent = `{{ elemento.js | raw }}`;
+                shadowRoot.appendChild(script);
+
+            // Función para actualizar el componente en el Shadow DOM
+            function updateComponent() {
+                const htmlContent = document.getElementById('elemento_html').value;
+                const cssContent = document.getElementById('elemento_css').value;
+
+                // Limpiar cualquier contenido anterior
+                shadowRoot.innerHTML = '';
+
+                // Inyectar el HTML
+                const componentHTML = document.createElement('div');
+                componentHTML.innerHTML = htmlContent;
+                shadowRoot.appendChild(componentHTML);
+
+                // Inyectar el CSS
+                const style = document.createElement('style');
+                style.textContent = cssContent + ' *{padding: 0; box-sizing: border-box;}';
+                shadowRoot.appendChild(style);
+            }
+
+            // Actualizar el componente al modificar el HTML o CSS
+            const htmlInput = document.getElementById('elemento_html');
+            const cssInput = document.getElementById('elemento_css');
+
+            htmlInput.addEventListener('input', updateComponent);
+            cssInput.addEventListener('input', updateComponent);
+
+            // Inicializar la vista previa con el contenido actual
+            updateComponent();
+        });
+    </script>
+{% endblock %}
